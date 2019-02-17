@@ -19,3 +19,49 @@ To address challenge C1, I developed a tweet classifier that that uses unigrams 
 My data set had roughly one million tweets from Florida during the period 6-15 September 2017. The data covered a data frame in R with 1048575 rows and 41 columns that include TWEET ID, TWEET TEXT, USER ID, DATE, HASHTAG, LATITUDE, and LONGITUDE.
 
 Apart from the Twitter data, we also collected ground truth data about gas shortage from Gasbuddy Application (https://business.gasbuddy.com/hurricane-irma-live-updates-fuel-availability-station-outages/7) and details and predictions of the Hurricane path from the National Hurricane Center Website. We collected this data for 8 cities namely Gainesville, Jacksonville, Miami, Orlando, Tallahassee, Tampa, Naples and West Palm Beach, for the period of 6-15 September 2017 (dates when shortage  was  observed).  For  each  date  and  city  we  determined  if  the  city  was  predicted  to  be  on  the hurricane path, if it was inside the hurricane 3-day or 5-day cone, the number of days to arrival of the hurricane, if there were any hurricane/thunderstorm warning and watches from National Hurricane Center in the city on that date, the maximum sustained wind speed, and population of the city, the number of gas stations in the city, proportion of gasoline stations without gasoline. The idea behind collection of  these  attributes  is  that  these  variables  also  drive  panic-buying  behavior  causing  shortage  and  also influence the tweeting behavior of the people. Therefore they are potential predictors of gasoline shortage and tweeting behavior of people in the models.
+
+
+# Methodology and Code
+
+## Stage 1: Filtering to generate gasoline-related tweets (tweet_filtering.R)
+
+In  Stage  1, I filtered  out  “gasoline-related”  tweets  from  the  compendium  of  tweets  generated  in  the affected area. I do this by keyword search in both the content and hashtags of each tweet. In the case of gasoline any word which has the letters “gas” as part of the word is a possible keyword. I use regular expressions to identify these key words. Even after this filtering, I have many tweets that are very noisy and need to be cleaned so as to facilitate further processing. I achieved this cleaning by removing user names, links, punctuations, tabs, general whitespaces, stopwords, and numbers. I further changed words to stem words and to lower case.
+
+## Stage 2: Classification to identify gasoline-shortage tweets (tweet_classification.R)
+
+To classify  the  tweets  as  “gasoline-shortage”, i.e tweets that implicitly or explicitly give information about gasoline shortage,   they  are  manually  annotated.  Next,  a  Support  Vector 6Machine Classifier is trained that classifies tweets using two kinds of features  unigrams and latent topics identified using topic modeling (LDA, CTM, LDA using Gibbs sampling). Through the 
+
+
+## Stage 3: Prediction of the number of future gasoline shortage tweets using a hybrid loss function (HLF) 
+
+### tweets_spatio_temporal_visualisation.R
+
+In this script we did a thorough spatial and temporal visulisation of tweets about gasoline shortage in Florida. We see how the frequency of tweets evolve as the hurricane nears Florida, as advsories are made every six hours by national hurricane center, as ground situation of gasoline shortage changes, as evacuations are ordered, and after landfall.
+
+### tweets_visulalisation_citywise.R
+
+In this script, for each city namely, Gainesville, Jacksonville, Miami, Orlando, Tallahassee, Tampa, Naples and West Palm Beach, we visulised the spatio-temporal arrival of each city.
+
+### temporal_dist_gas_tweets_citywise.R
+
+In this script, we studied the temporal distribution of shortage tweets in each city. First, for each city, I test if the arrival of tweets fit a Poisson Distributin using Chi-square testing. In the second part we do a time series analysis of tweet arrival for each city.
+
+### forecasting_tweets.R
+
+In temporal_dist_gas_tweets_citywise.R, we found that the arrival of tweets in the city hourly follwoed a Poisson Distribution, and ARIMA models also fit the temporal patten of hourly gasoline tweets in each city. So in this tweet, we try to forecast gasoline tweets using three methods :
+* ARIMA 
+* Poisson Regression with independdent variables as percentage of gas stations without gas, if the city was inside the hurricane 3-day or 5-day cone, the number of days to arrival of the hurricane, if there were any hurricane/thunderstorm warning and watches from National Hurricane Center in the city on that date, the maximum sustained wind speed, and population of the city.
+* A Hybrid Loss Function (HLF) that combines ARIMA results with liklihood function of Poisson Regression and solve it using gradient descent
+
+
+## Stage 4: Prediction of the gasoline shortage using the forecasted tweets (predicting_shortage_from_tweets.R)
+
+In this script, we use the prediction in stage 3 to predict shortage on next day using Poisson Regression
+
+
+
+
+
+
+
+
