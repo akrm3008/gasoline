@@ -7,14 +7,15 @@ library(tm)
 
 
 # Getting Data
-Path <- "/Users/abhinavkhare/Documents/Phd Project/Data/Data/tweets.csv"
+
+Path <- "/Users/abhinavkhare/Documents/github_tweets_to_gas_shortage/tweets.csv"
 
 
 df <- fread(Path)
 
 
 # Adding column SNO.
-df <- df %>% mutate(SNO= seq(from= 1,to=1048575))
+df <- df %>% mutate(doc_id = seq(from= 1,to=1048575))
 
 # Retreiving the data for dates of hurricane onset, hurricane landfall and few days after disaster
 dates <- unique(df$DATE) 
@@ -52,37 +53,45 @@ dfgas <- df %>% filter(HASHTAG1 %in% hashtag_gas | HASHTAG2 %in% hashtag_gas|
 
 
 # Getiting a csv file to lable tweets that are about gasoline shortage 
-gas_tweets <- dfgas %>% select(SNO,TWEET_TEXT)
+gas_tweets <- dfgas %>% select(doc_id,TWEET_TEXT)
 
-
+Path2 <-"/Users/abhinavkhare/Documents/Phd Project/Data/Data"
 setwd(Path2)
 fwrite(gas_tweets, file = "gas_tweets_till15th.csv")
 
 # Joining labeled tweets with the rest of the data
-Path3 <- ''
-labeled_data <- fread("/Users/abhinavkhare/Documents/Phd Project/Data/Data/gas_tweets_till15th.csv")
+
+labeled_data <- fread("/Users/abhinavkhare/Documents/Phd Project/Data/Data/gas_tweets_till15th_v2.csv")
 labeled_data <- labeled_data[,-2]
-dfgas <- full_join(dfgas, labeled_data, by = "SNO")
+colnames(labeled_data)[1] <- "doc_id"
+dfgas <- full_join(dfgas, labeled_data, by = "doc_id")
 
+#  Subsetting data for making cropus 
+#dfgas <- dfgas[,-1]
+gas_tweets <- dfgas %>% select(doc_id,TWEET_TEXT)
+colnames(gas_tweets)[2] <- "text"
 
-# Extracitng tweets to further preprocess
-gas_tweets <- dfgas$TWEET_TEXT
 
 # Preprocessing tweets 
-gas_tweets <- iconv(gas_tweets, to = "ASCII", sub = " ")
-gas_tweets <- tolower(gas_tweets)
-gas_tweets <- gsub("rt", " ", gas_tweets) 
-gas_tweets <- gsub("@\\w+", " ", gas_tweets)  # Remove user names (all proper names if you're wise!)
-gas_tweets <- gsub("http.+ |http.+$", " ", gas_tweets)  # Remove links
-gas_tweets <- gsub("[[:punct:]]", " ", gas_tweets)  # Remove punctuation
-gas_tweets <- gsub("[ |\t]{2,}", " ", gas_tweets)  # Remove tabs
-gas_tweets <- gsub("amp", " ", gas_tweets)  # "&" is "&amp" in HTML, so after punctuation removed ...
-gas_tweets <- gsub("^ ", "", gas_tweets)  # Leading blanks
-gas_tweets <- gsub(" $", "", gas_tweets)  # Lagging blanks
-gas_tweets <- gsub(" +", " ", gas_tweets) # General spaces (should just do all whitespaces no?)
+gas_tweets$text <- iconv(gas_tweets$text, to = "ASCII", sub = " ")
+gas_tweets$text <- tolower(gas_tweets$text)
+gas_tweets$text <- gsub("rt", " ", gas_tweets$text) 
+gas_tweets$text <- gsub("@\\w+", " ", gas_tweets$text)  # Remove user names (all proper names if you're wise!)
+gas_tweets$text <- gsub("http.+ |http.+$", " ", gas_tweets$text)  # Remove links
+gas_tweets$text <- gsub("[[:punct:]]", " ", gas_tweets$text)  # Remove punctuation
+gas_tweets$text <- gsub("[ |\t]{2,}", " ", gas_tweets$text)  # Remove tabs
+gas_tweets$text <- gsub("amp", " ", gas_tweets$text)  # "&" is "&amp" in HTML, so after punctuation removed ...
+gas_tweets$text<- gsub("^ ", "", gas_tweets$text)  # Leading blanks
+gas_tweets$text <- gsub(" $", "", gas_tweets$text)  # Lagging blanks
+gas_tweets$text <- gsub(" +", " ", gas_tweets$text) # General spaces (should just do all whitespaces no?)
+
+
+# Changing columnnames to preserve  document id in corpus
+
 
 # making corpus
-corpus <- Corpus(VectorSource(gas_tweets)) 
+corpus = VCorpus(DataframeSource(gas_tweets))
+#corpus <- Corpus(VectorSource(gas_tweets)) 
 
 # Remove English stop words.
 corpus <- tm_map(corpus, removeWords, stopwords("en"))
