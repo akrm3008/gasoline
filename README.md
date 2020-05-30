@@ -59,7 +59,7 @@ In temporal_dist_gas_tweets_citywise.R, we found that the arrival of tweets in t
 In this script, we use the prediction in stage 3 to predict shortage on next day using Poisson Regression
 
 
-# For further details refer to the published work.
+# For further details refer to the published work in file Published.pdf.
 
 
 
