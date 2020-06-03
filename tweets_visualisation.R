@@ -1,4 +1,4 @@
-# In this script I visulaise the arrival of gasoline-shortage tweets in space and time (classified in previous stage) 
+# In this script I visulaise the arrival of gasoline-shortage tweets in space and time 
 
 library(data.table)
 library(dplyr)
