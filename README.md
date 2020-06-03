@@ -34,7 +34,7 @@ To classify  the  tweets  as  “gasoline-shortage”, i.e tweets that implicitl
 
 ## Stage 3: Prediction of the number of future gasoline shortage tweets using a hybrid loss function (HLF) 
 
-### tweets_spatio_temporal_visualisation.R
+### tweets_visualisation.R
 
 In this script we did a thorough spatial and temporal visulisation of tweets about gasoline shortage in Florida. We see how the frequency of tweets evolve as the hurricane nears Florida, as advsories are made every six hours by national hurricane center, as ground situation of gasoline shortage changes, as evacuations are ordered, and after landfall.
 
@@ -42,7 +42,7 @@ In this script we did a thorough spatial and temporal visulisation of tweets abo
 
 In this script, for each city namely, Gainesville, Jacksonville, Miami, Orlando, Tallahassee, Tampa, Naples and West Palm Beach, we visulised the spatio-temporal arrival of each city.
 
-### temporal_dist_gas_tweets_citywise.R
+### testing_tweets_arrival.R
 
 In this script, we studied the temporal distribution of shortage tweets in each city. First, for each city, I test if the arrival of tweets fit a Poisson Distributin using Chi-square testing. In the second part we do a time series analysis of tweet arrival for each city.
 
@@ -54,12 +54,12 @@ In temporal_dist_gas_tweets_citywise.R, we found that the arrival of tweets in t
 * A Hybrid Loss Function (HLF) that combines ARIMA results with liklihood function of Poisson Regression and solve it using gradient descent
 
 
-## Stage 4: Prediction of the gasoline shortage using the forecasted tweets (predicting_shortage_from_tweets.R)
+## Stage 4: Prediction of the gasoline shortage using the forecasted tweets (predicting_shortage.R)
 
-In this script, we use the prediction in stage 3 to predict shortage on next day using Poisson Regression
+In this script, we use the prediction in stage 3 to predict shortage on next day using Poisson Regression.
 
 
-# For further details refer to the published work in file Published.pdf.
+For further details refer to the published work in file Published.pdf or https://link.springer.com/article/10.1007/s00291-019-00559-8
 
 
 
