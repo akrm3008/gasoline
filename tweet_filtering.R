@@ -7,10 +7,6 @@ library(tm)
 
 
 # Getting Data
-
-Path <- "/Users/abhinavkhare/Documents/github_tweets_to_gas_shortage/tweets.csv"
-
-
 df <- fread(Path)
 
 
